@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 import sakuuj.springcourse.sensor.dto.SensorDto;
 import sakuuj.springcourse.sensor.exceptions.RestErrorResponse;
 import sakuuj.springcourse.sensor.exceptions.SensorErrorException;
@@ -29,9 +30,9 @@ public class SensorController {
     }
 
     @PostMapping("/registration")
-    @ResponseBody
     public ResponseEntity<SensorDto> registerSensor(@RequestBody @Valid SensorDto sensorDto,
-                                                    BindingResult bindingResult) {
+                                                    BindingResult bindingResult,
+                                                    UriComponentsBuilder ucb) {
 
         if (bindingResult.hasErrors()) {
             throw new SensorErrorException(bindingResult.getAllErrors());
@@ -40,7 +41,7 @@ public class SensorController {
         Sensor sensor = mapper.map(sensorDto, Sensor.class);
         sensorService.save(sensor);
 
-        return new ResponseEntity<>(sensorDto, HttpStatus.OK);
+        return new ResponseEntity<>(sensorDto, HttpStatus.CREATED);
     }
 
     @ExceptionHandler
